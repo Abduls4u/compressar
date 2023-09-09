@@ -22,6 +22,9 @@ class CompressarGui():
         self.window.title("Compressar")
         # self.window.geometry("300x300")
 
+        # Initialize folder path to none
+        self.folder_path = None
+
         # -- select image button --
         self.select_button = tk.Button(self.window,
                                        text="Select Image",
@@ -45,6 +48,9 @@ class CompressarGui():
         self.quality_scale.grid(row=2,
                                 sticky='nsew', padx=50,
                                 pady=5, columnspan=2)
+     
+        # Initialize slider value to its default
+        self.slider_value = self.quality_scale.get()
 
         # -- Destination folder selector --
         self.destination_label = tk.Label(self.window,
@@ -121,7 +127,7 @@ class CompressarGui():
     # -- Return quality value --
     def get_slider_value(self, event):
         '''Returns slider position'''
-        self.slider_value = self.quality_scale.get()
+        self.slider_value = int(self.quality_scale.get())
         return (self.slider_value)
 
     def destination_folder(self):
@@ -146,16 +152,12 @@ class CompressarGui():
 
     def to_jpg(self):
         '''Returns true if button is clicked otherwise false'''
-        if self.to_jpg_var.get():
-            self.to_jpg_value = True
-        else:
-            self.to_jpg_value = False
-        return (self.to_jpg_value)
+        return (self.to_jpg_var.get())
 
     def compress(self):
         '''Main compressar method'''
         ext = self.image_name.split('.')[-1]
-        if self.to_jpg_value and ext not in ['.jpg', '.jpeg']:
+        if self.to_jpg_var.get() and ext not in ['.jpg', '.jpeg']:
             img = Image.open(self.file_path)
             img = img.convert("RGB")
             self.image_name = self.image_name.split(".")[0] + "_comp" + ".jpg"
@@ -165,19 +167,20 @@ class CompressarGui():
             img.save(f'{self.folder_path}/{self.image_name}',
                      "JPEG", optimize=True, quality=self.slider_value)
         else:
-            maximum_width = 1200
             img = Image.open(self.file_path)
             img_width, img_height = img.size
-            image_aspect_ratio = img_width / img_height
-            new_height = maximum_width / image_aspect_ratio
-            img = img.resize((maximum_width, round(new_height)))
-            self.image_name = self.image_name.split(".")[0] + "_comp" + ext
+            new_height = (self.slider_value / 100) * img_height
+            new_width = (self.slider_value / 100) * img_width
+            img = img.resize((round(new_width), round(new_height)))
+            self.image_name = self.image_name.split(".")[0] + "_comp." + ext
             if not self.folder_path:
                 user_desktop = os.path.expanduser("~/Desktop")
                 self.folder_path = user_desktop
             img.save(f'{self.folder_path}/{self.image_name}',
                      optimize=True,
                      quality=self.slider_value)
+        messagebox.showinfo('Compressed',
+                            f'Compressed {self.image_name} successfully')
 
 
 CompressarGui()
