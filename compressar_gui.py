@@ -143,7 +143,7 @@ class CompressarGui():
         self.file_path = askopenfilename(title="Select Image",
                                          filetypes=[
                                              ("Image Files",
-                                              "*.jpg *.jpeg *.png *.bmp *.gif")])
+                                              "*.jpg *.jpeg *.png *.bmp *.if")])
         if self.file_path:
             self.image_name = os.path.basename(self.file_path)
             return (self.file_path)
