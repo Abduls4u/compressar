@@ -189,10 +189,16 @@ class CompressarGui():
                 img.save(f'{self.folder_path}/{self.image_name}',
                         optimize=True,
                         quality=self.slider_value)
+            # Reset attributes value
+            self.file_path = None
+            self.quality_scale.set(90)
+            self.destination_entry.delete(0, tk.END)
+            self.to_jpg_var = False
+
             messagebox.showinfo('Compressed',
                                 f'Compressed {self.img_name} successfully')
         else:
-            messagebox.showerror('Image Seleection Error',
+            messagebox.showerror('Image Selection Error',
                                  'Please select an image')
 
 
