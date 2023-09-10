@@ -6,21 +6,36 @@ from tkinter.filedialog import askopenfilename
 import os
 
 
-# Define a function to compress an image
-def compress_image(image_name, quality, to_jpg):
-    # Open the image file
-    img = Image.open(image_name)
-    # If to_jpg is True, convert the image to JPEG format
-    if to_jpg:
-        img = img.convert("RGB")
-        image_name = image_name.rsplit(".", 1)[0] + ".jpg"
-    #else:
-     #   image_name = 'compressed_' + image_name
-    # Save the image with the specified quality
-    img.save(image_name, optimize=True, quality=quality)
-    # Return the new size of the image
-    return (True)
-
+def compress(self):
+        '''Main compressar method'''
+        if file_path:
+            ext = image_name.split('.')[-1]
+            if to_jpg_var.get() and ext not in ['.jpg', '.jpeg']:
+                img = Image.open(file_path)
+                img = img.convert("RGB")
+                img_name = image_name
+                image_name = image_name.split(".")[0] + "_comp" + \
+                    ".jpg"
+                if not folder_path:
+                    user_desktop = os.path.expanduser("~/Desktop")
+                    folder_path = user_desktop
+                img.save(f'{folder_path}/{image_name}',
+                         "JPEG", optimize=True, quality=slider_value)
+            else:
+                img = Image.open(file_path)
+                img_width, img_height = img.size
+                new_height = (slider_value / 100) * img_height
+                new_width = (slider_value / 100) * img_width
+                img = img.resize((round(new_width), round(new_height)))
+                img_name = image_name
+                image_name = image_name.split(".")[0] + "_comp." + \
+                    ext
+                if not folder_path:
+                    user_desktop = os.path.expanduser("~/Desktop")
+                    folder_path = user_desktop
+                img.save(f'{folder_path}/{image_name}',
+                         optimize=True,
+                         quality=slider_value)
 
 def main():
     print('Please select an image\n')
