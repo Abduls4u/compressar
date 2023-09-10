@@ -11,6 +11,18 @@ from tkinter.filedialog import askdirectory, askopenfilename
 import random
 import os
 from PIL import Image
+import sys
+
+
+def get_facts_file_path():
+    '''Returns facts.txt'''
+    # Check if running as a bundled executable
+    if getattr(sys, 'frozen', False):
+        # Use sys._MEIPASS to access bundled files
+        return os.path.join(sys._MEIPASS, 'facts.txt')
+    else:
+        # If not bundled, assume it's in the current directory
+        return 'facts.txt'
 
 
 class CompressarGui():
@@ -120,7 +132,8 @@ class CompressarGui():
     def display_facts(self):
         '''displays facts randomly from facts.txt'''
         try:
-            with open("facts.txt", "r") as file:
+            facts_path = get_facts_file_path()
+            with open(facts_path, "r") as file:
                 # add all lines to a list
                 lines = [line.strip() for line in file.readlines()]
                 # Ensure list is not empty
