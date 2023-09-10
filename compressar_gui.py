@@ -18,12 +18,14 @@ class CompressarGui():
         '''Constructs all the necessary attributes for the compressarGui'''
         # -- main compressar window --
         self.window = tk.Tk()
-        self.window.configure(bg="sky blue")
+        self.window.configure(bg="#333333")
         self.window.title("Compressar")
         # self.window.geometry("300x300")
 
         # Initialize folder path to none
         self.folder_path = None
+        self.file_path = None
+        self.img_name = None
 
         # -- select image button --
         self.select_button = tk.Button(self.window,
@@ -48,7 +50,6 @@ class CompressarGui():
         self.quality_scale.grid(row=2,
                                 sticky='nsew', padx=50,
                                 pady=5, columnspan=2)
-     
         # Initialize slider value to its default
         self.slider_value = self.quality_scale.get()
 
@@ -61,7 +62,8 @@ class CompressarGui():
 
         self.destination_btn = tk.Button(self.window,
                                          text="Select Folder",
-                                         command=self.destination_folder)
+                                         command=self.destination_folder,
+                                         bg='orange')
         self.destination_btn.grid(row=4,
                                   column=0, sticky='nse',
                                   padx=15, pady=5)
@@ -85,19 +87,22 @@ class CompressarGui():
         # -- Fact button --
         self.facts_btn = tk.Button(self.window,
                                    text='Quick Fact',
-                                   command=self.display_facts)
+                                   command=self.display_facts,
+                                   bg='orange')
         self.facts_btn.grid(row=6,
                             column=2, columnspan=2,
                             sticky="swe", padx=5, pady=5)
         # -- Compress button --
         self.compressbtn = tk.Button(self.window,
                                      text='compress',
-                                     command=self.compress)
+                                     command=self.compress,
+                                     bg='orange')
         self.compressbtn.grid(row=0, column=2, columnspan=2, padx=5, pady=5)
 
         self.window.grid_columnconfigure(index=0, weight=1)
         self.window.grid_columnconfigure(index=1, weight=1)
         self.window.grid_columnconfigure(index=2, weight=1)
+        self.window.resizable(False, False)
         # self.window.grid_rowconfigure(index=2, weight=2)
         self.quality_scale.bind("<Motion>", self.get_slider_value)
         self.window.protocol("WM_DELETE_WINDOW", self.close)
@@ -120,9 +125,9 @@ class CompressarGui():
                 # Ensure list is not empty
                 if lines:
                     quick_fact = random.choice(lines)
-                    messagebox.showinfo("Quick Fact", quick_fact)
+                    messagebox.showinfo("Did you know?", quick_fact)
         except Exception:
-            messagebox.showinfo("Gratitude", "Thank You :)")
+            messagebox.showinfo("Gratitude", "Thank you for choosing Compressar :)")
 
     # -- Return quality value --
     def get_slider_value(self, event):
@@ -133,8 +138,8 @@ class CompressarGui():
     def destination_folder(self):
         '''Returns selected save directory'''
         self.folder_path = askdirectory()
-        folder_w_ext = os.path.basename(self.folder_path)
         if self.folder_path:
+            folder_w_ext = os.path.basename(self.folder_path)
             self.entry_var.set(folder_w_ext)
             return (self.folder_path)
 
@@ -143,7 +148,9 @@ class CompressarGui():
         self.file_path = askopenfilename(title="Select Image",
                                          filetypes=[
                                              ("Image Files",
-                                              "*.jpg *.jpeg *.png *.bmp *.gif")])
+                                              "*.jpg *.jpeg\
+                                              *.png *.bmp\
+                                                *.gif")])
         if self.file_path:
             self.image_name = os.path.basename(self.file_path)
             return (self.file_path)
@@ -156,31 +163,37 @@ class CompressarGui():
 
     def compress(self):
         '''Main compressar method'''
-        ext = self.image_name.split('.')[-1]
-        if self.to_jpg_var.get() and ext not in ['.jpg', '.jpeg']:
-            img = Image.open(self.file_path)
-            img = img.convert("RGB")
-            self.image_name = self.image_name.split(".")[0] + "_comp" + ".jpg"
-            if not self.folder_path:
-                user_desktop = os.path.expanduser("~/Desktop")
-                self.folder_path = user_desktop
-            img.save(f'{self.folder_path}/{self.image_name}',
-                     "JPEG", optimize=True, quality=self.slider_value)
+        if self.file_path:
+            ext = self.image_name.split('.')[-1]
+            if self.to_jpg_var.get() and ext not in ['.jpg', '.jpeg']:
+                img = Image.open(self.file_path)
+                img = img.convert("RGB")
+                self.img_name = self.image_name
+                self.image_name = self.image_name.split(".")[0] + "_comp" + ".jpg"
+                if not self.folder_path:
+                    user_desktop = os.path.expanduser("~/Desktop")
+                    self.folder_path = user_desktop
+                img.save(f'{self.folder_path}/{self.image_name}',
+                        "JPEG", optimize=True, quality=self.slider_value)
+            else:
+                img = Image.open(self.file_path)
+                img_width, img_height = img.size
+                new_height = (self.slider_value / 100) * img_height
+                new_width = (self.slider_value / 100) * img_width
+                img = img.resize((round(new_width), round(new_height)))
+                self.img_name = self.image_name
+                self.image_name = self.image_name.split(".")[0] + "_comp." + ext
+                if not self.folder_path:
+                    user_desktop = os.path.expanduser("~/Desktop")
+                    self.folder_path = user_desktop
+                img.save(f'{self.folder_path}/{self.image_name}',
+                        optimize=True,
+                        quality=self.slider_value)
+            messagebox.showinfo('Compressed',
+                                f'Compressed {self.img_name} successfully')
         else:
-            img = Image.open(self.file_path)
-            img_width, img_height = img.size
-            new_height = (self.slider_value / 100) * img_height
-            new_width = (self.slider_value / 100) * img_width
-            img = img.resize((round(new_width), round(new_height)))
-            self.image_name = self.image_name.split(".")[0] + "_comp." + ext
-            if not self.folder_path:
-                user_desktop = os.path.expanduser("~/Desktop")
-                self.folder_path = user_desktop
-            img.save(f'{self.folder_path}/{self.image_name}',
-                     optimize=True,
-                     quality=self.slider_value)
-        messagebox.showinfo('Compressed',
-                            f'Compressed {self.image_name} successfully')
+            messagebox.showerror('Image Seleection Error',
+                                 'Please select an image')
 
 
 CompressarGui()
