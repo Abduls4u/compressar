@@ -70,7 +70,8 @@ class CompressarGui():
 
         self.entry_var = tk.StringVar()
         self.destination_entry = tk.Entry(self.window,
-                                          textvariable=self.entry_var)
+                                          textvariable=self.entry_var,
+                                          state="readonly")
         self.destination_entry.grid(row=4, column=1)
 
         # -- Format check label --
@@ -127,7 +128,8 @@ class CompressarGui():
                     quick_fact = random.choice(lines)
                     messagebox.showinfo("Did you know?", quick_fact)
         except Exception:
-            messagebox.showinfo("Gratitude", "Thank you for choosing Compressar :)")
+            messagebox.showinfo("Gratitude",
+                                "Thank you for choosing Compressar :)")
 
     # -- Return quality value --
     def get_slider_value(self, event):
@@ -169,12 +171,13 @@ class CompressarGui():
                 img = Image.open(self.file_path)
                 img = img.convert("RGB")
                 self.img_name = self.image_name
-                self.image_name = self.image_name.split(".")[0] + "_comp" + ".jpg"
+                self.image_name = self.image_name.split(".")[0] + "_comp" + \
+                    ".jpg"
                 if not self.folder_path:
                     user_desktop = os.path.expanduser("~/Desktop")
                     self.folder_path = user_desktop
                 img.save(f'{self.folder_path}/{self.image_name}',
-                        "JPEG", optimize=True, quality=self.slider_value)
+                         "JPEG", optimize=True, quality=self.slider_value)
             else:
                 img = Image.open(self.file_path)
                 img_width, img_height = img.size
@@ -182,13 +185,14 @@ class CompressarGui():
                 new_width = (self.slider_value / 100) * img_width
                 img = img.resize((round(new_width), round(new_height)))
                 self.img_name = self.image_name
-                self.image_name = self.image_name.split(".")[0] + "_comp." + ext
+                self.image_name = self.image_name.split(".")[0] + "_comp." + \
+                    ext
                 if not self.folder_path:
                     user_desktop = os.path.expanduser("~/Desktop")
                     self.folder_path = user_desktop
                 img.save(f'{self.folder_path}/{self.image_name}',
-                        optimize=True,
-                        quality=self.slider_value)
+                         optimize=True,
+                         quality=self.slider_value)
             # Reset attributes value
             self.file_path = None
             self.quality_scale.set(90)
