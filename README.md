@@ -48,12 +48,16 @@ pip install pillow
 
 ## Screenshots
 
+## Demo Video
+Here is a demo video of Compressar: 
+[Watch Video](https://github.com/Abduls4u/compressar/blob/Gui_version/compressar_gui%20demo.mp4)
+
 ## License
 Compressar is released under the MIT License. For details, please refer to the [LICENSE](LICENSE) file.
 
 ## Acknowledgments
 - Compressar relies on the excellent Pillow library for image processing.
-- Inspired by ....
+- Inspired by file roller on ubuntu 
 
 ## Contributing
 Contributions are encouraged and welcome! Fork the repository and create a pull request to contribute improvements.
