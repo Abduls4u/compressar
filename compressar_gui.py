@@ -196,9 +196,9 @@ class CompressarGui():
             # Reset attributes value
             self.file_path = None
             self.quality_scale.set(90)
+            self.to_jpg_var.set(False)
             self.destination_entry.delete(0, tk.END)
-            self.to_jpg_var = False
-
+            self.entry_var.set('')
             messagebox.showinfo('Compressed',
                                 f'Compressed {self.img_name} successfully')
         else:
